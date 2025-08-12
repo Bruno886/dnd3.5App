@@ -1,59 +1,51 @@
-using dnd3._5App.Models;
-using TG.Blazor.IndexedDB;
+using System.Text.Json;
 using System.Linq;
+using System.Collections.Generic;
+using dnd3._5App.Models;
+using Microsoft.JSInterop;
 
 namespace dnd3._5App.Services;
 
 /// <summary>
-/// Simple wrapper around IndexedDB. Fallback to in-memory list when unavailable.
+/// Simple wrapper around browser localStorage for persisting characters.
 /// </summary>
 public class StorageService
 {
-    private readonly IndexedDBManager _db;
-    private readonly List<Character> _memory = new();
+    private readonly IJSRuntime _js;
     private const string StoreName = "characters";
 
-    public StorageService(IndexedDBManager db)
+    public StorageService(IJSRuntime js)
     {
-        _db = db;
+        _js = js;
     }
 
     public async Task<List<Character>> GetCharactersAsync()
     {
-        try
-        {
-            var recs = await _db.GetRecords<Character>(StoreName);
-            return recs.ToList();
-        }
-        catch
-        {
-            return _memory;
-        }
+        var json = await _js.InvokeAsync<string>("localStorage.getItem", StoreName);
+        if (string.IsNullOrWhiteSpace(json)) return new List<Character>();
+        return JsonSerializer.Deserialize<List<Character>>(json) ?? new List<Character>();
+    }
+
+    public async Task<Character?> GetCharacterAsync(string id)
+    {
+        var chars = await GetCharactersAsync();
+        return chars.FirstOrDefault(c => c.Id == id);
     }
 
     public async Task SaveCharacterAsync(Character c)
     {
-        try
-        {
-            var record = new StoreRecord<Character> { Storename = StoreName, Data = c };
-            await _db.AddRecord(record);
-        }
-        catch
-        {
-            var idx = _memory.FindIndex(x => x.Id == c.Id);
-            if (idx >= 0) _memory[idx] = c; else _memory.Add(c);
-        }
+        var chars = await GetCharactersAsync();
+        var idx = chars.FindIndex(x => x.Id == c.Id);
+        if (idx >= 0) chars[idx] = c; else chars.Add(c);
+        var json = JsonSerializer.Serialize(chars);
+        await _js.InvokeVoidAsync("localStorage.setItem", StoreName, json);
     }
 
     public async Task DeleteCharacterAsync(string id)
     {
-        try
-        {
-            await _db.DeleteRecord(StoreName, id);
-        }
-        catch
-        {
-            _memory.RemoveAll(c => c.Id == id);
-        }
+        var chars = await GetCharactersAsync();
+        chars.RemoveAll(c => c.Id == id);
+        var json = JsonSerializer.Serialize(chars);
+        await _js.InvokeVoidAsync("localStorage.setItem", StoreName, json);
     }
 }
