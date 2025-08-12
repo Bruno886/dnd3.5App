@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\dnd3.5App.props" />
+</Project>
