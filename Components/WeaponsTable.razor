@@ -1,0 +1,24 @@
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.RulesService Rules
+
+@if (Character != null)
+{
+    var bab = Rules.BaseAttackBonus(Character);
+    <table class="weapons">
+        <thead><tr><th>Name</th><th>Bonus</th><th>Damage</th></tr></thead>
+        <tbody>
+        @foreach (var a in Character.Attacks)
+        {
+            <tr>
+                <td>@a.Name</td>
+                <td>@(bab + a.Enhancement + Rules.AbilityMod(Rules.AbilityScore(Character, Ability.Str)))</td>
+                <td>@a.Damage</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public Character? Character { get; set; }
+}

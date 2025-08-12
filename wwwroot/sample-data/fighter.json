@@ -1,0 +1,41 @@
+{
+  "id": "fighter-1",
+  "name": "Borin",
+  "race": "Human",
+  "classLevels": [
+    {
+      "className": "Fighter",
+      "level": 1,
+      "babProgression": "Full",
+      "saveProgression": { "fort": "Good", "ref": "Poor", "will": "Poor" }
+    }
+  ],
+  "alignment": "NG",
+  "size": "Medium",
+  "deity": "",
+  "speedBase": 30,
+  "abilities": { "str": 16, "dex": 12, "con": 14, "int": 10, "wis": 10, "cha": 8 },
+  "abilityTempMods": { "str": 0, "dex": 0, "con": 0, "int": 0, "wis": 0, "cha": 0 },
+  "hp": { "rolled": [10], "bonusPerLevel": 0, "misc": 0, "current": 10, "nonlethal": 0 },
+  "ac": { "armorBonus": 4, "shieldBonus": 0, "naturalArmor": 0, "deflection": 0, "dodge": 0, "misc": 0, "armorCheckPenalty": -2, "maxDex": 4 },
+  "initiativeMisc": 0,
+  "savesMisc": { "fort": 0, "ref": 0, "will": 0 },
+  "attacks": [
+    { "name": "Melee", "weapon": "Longsword", "enhancement": 0, "damage": "1d8+STR", "crit": "19-20/x2", "rangeIncrement": null }
+  ],
+  "grappleMisc": 0,
+  "skills": [
+    { "name": "Balance", "ability": "Dex", "ranks": 0, "misc": 0, "armorCheckApplies": true, "isClassSkill": false },
+    { "name": "Climb", "ability": "Str", "ranks": 0, "misc": 0, "armorCheckApplies": true, "isClassSkill": true }
+  ],
+  "feats": [ { "name": "Power Attack", "notes": "" } ],
+  "traits": [],
+  "classFeatures": [ { "name": "Bonus Feat", "uses": 0, "notes": "" } ],
+  "languages": ["Common"],
+  "equipment": [ { "name": "Chain Shirt", "qty": 1, "weight": 25, "slot": "armor", "acBonus": 4, "armorCheckPenalty": -2, "maxDex": 4 } ],
+  "inventory": [ { "name": "Rations", "qty": 5, "weight": 1 } ],
+  "money": { "cp": 0, "sp": 0, "gp": 100, "pp": 0 },
+  "encumbrance": { "carryCapacityOverride": null },
+  "spells": { "casterEntries": [] },
+  "notes": ""
+}
