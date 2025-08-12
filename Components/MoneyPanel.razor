@@ -1,0 +1,15 @@
+@using dnd3._5App.Models
+
+@if (Character != null)
+{
+    <div class="money">
+        <div>CP: @Character.Money.Cp</div>
+        <div>SP: @Character.Money.Sp</div>
+        <div>GP: @Character.Money.Gp</div>
+        <div>PP: @Character.Money.Pp</div>
+    </div>
+}
+
+@code {
+    [Parameter] public Character? Character { get; set; }
+}

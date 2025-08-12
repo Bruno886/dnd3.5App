@@ -1,0 +1,17 @@
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.RulesService Rules
+
+@if (Character != null)
+{
+    var ac = Rules.ArmorClass(Character);
+    <div class="ac">
+        <div>AC: @ac.Total</div>
+        <div>Touch: @ac.Touch</div>
+        <div>Flat-Footed: @ac.FlatFooted</div>
+        <div>DEX Used: @ac.DexUsed</div>
+    </div>
+}
+
+@code {
+    [Parameter] public Character? Character { get; set; }
+}

@@ -1,0 +1,27 @@
+@page "/characters"
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.StorageService Storage
+
+<h3>Characters</h3>
+
+@if (_characters is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+    @foreach (var c in _characters)
+    {
+        <li><a href="/character/@c.Id">@c.Name (@c.Level)</a></li>
+    }
+    </ul>
+}
+
+@code {
+    private List<dnd3._5App.Models.Character>? _characters;
+    protected override async Task OnInitializedAsync()
+    {
+        _characters = await Storage.GetCharactersAsync();
+    }
+}

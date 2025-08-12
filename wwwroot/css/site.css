@@ -1,0 +1,10 @@
+body {
+    background-color: #fdf6e3;
+    color: #222;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.abilities, .saves, .ac, .weapons, .skills, .money {
+    margin-bottom: 1rem;
+}

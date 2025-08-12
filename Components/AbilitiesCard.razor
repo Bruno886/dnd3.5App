@@ -1,0 +1,21 @@
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.RulesService Rules
+
+<div class="abilities">
+@foreach (var ability in Enum.GetValues<Ability>())
+{
+    <div class="ability-row">
+        <label>@ability.ToString().ToUpper()</label>
+        <input type="number" value="@Abilities[ability]" @onchange="e => Update(ability, e)" />
+        <span>@Rules.AbilityMod(Abilities[ability] + TempMods[ability])</span>
+    </div>
+}
+</div>
+
+@code {
+    [Parameter] public AbilityScores Abilities { get; set; } = new();
+    [Parameter] public AbilityScores TempMods { get; set; } = new();
+
+    private void Update(Ability ability, ChangeEventArgs e)
+        => Abilities[ability] = int.Parse(e.Value?.ToString() ?? "0");
+}

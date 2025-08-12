@@ -1,0 +1,16 @@
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.RulesService Rules
+
+@if (Character != null)
+{
+    var saves = Rules.Saves(Character);
+    <div class="saves">
+        <div>Fortitude: @saves.Fort</div>
+        <div>Reflex: @saves.Ref</div>
+        <div>Will: @saves.Will</div>
+    </div>
+}
+
+@code {
+    [Parameter] public Character? Character { get; set; }
+}

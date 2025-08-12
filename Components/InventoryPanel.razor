@@ -1,0 +1,15 @@
+@using dnd3._5App.Models
+
+@if (Character != null)
+{
+    <ul>
+    @foreach (var item in Character.Inventory)
+    {
+        <li>@item.Name x@item.Qty (@item.Weight lb)</li>
+    }
+    </ul>
+}
+
+@code {
+    [Parameter] public Character? Character { get; set; }
+}
