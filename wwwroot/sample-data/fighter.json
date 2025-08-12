@@ -7,7 +7,18 @@
       "className": "Fighter",
       "level": 1,
       "babProgression": "Full",
-      "saveProgression": { "fort": "Good", "ref": "Poor", "will": "Poor" }
+      "saveProgression": { "fort": "Good", "ref": "Poor", "will": "Poor" },
+      "hitDie": "D10",
+      "classSkills": ["Climb", "Jump", "Ride"],
+      "simpleWeapons": true,
+      "martialWeapons": true,
+      "weaponProficiencies": "",
+      "lightArmor": true,
+      "mediumArmor": true,
+      "heavyArmor": true,
+      "armorProficiencies": "",
+      "shields": true,
+      "towerShields": true
     }
   ],
   "alignment": "NG",

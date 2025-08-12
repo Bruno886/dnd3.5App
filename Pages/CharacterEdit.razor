@@ -1,6 +1,7 @@
 @page "/character-edit"
 @page "/character-edit/{Id}"
 @using dnd3._5App.Models
+@using System.Collections.Generic
 @inject dnd3._5App.Services.StorageService Storage
 @inject NavigationManager Nav
 
@@ -9,7 +10,7 @@
         <input class="form-control form-control-lg mb-2" placeholder="Character Name" @bind="character.Name" />
         <div class="row g-2">
             <div class="col-12 col-sm-4">
-                <input class="form-control" placeholder="Class" @bind="classLevel.ClassName" />
+                <input class="form-control" placeholder="Class" value="@classLevel.ClassName" readonly @onclick="OpenClassModal" />
             </div>
             <div class="col-6 col-sm-2">
                 <input type="number" class="form-control" placeholder="Level" @bind="classLevel.Level" min="0" max="20" />
@@ -92,11 +93,140 @@
     </div>
 </div>
 
+@if (showClassModal)
+{
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Class</h5>
+                    <button type="button" class="btn-close" @onclick="CloseClassModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Class Name</label>
+                        <input class="form-control" @bind="classLevel.ClassName" />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Base Attack Progression</label>
+                            <select class="form-select" @bind="classLevel.BabProgression">
+                                <option value="BabProgression.Full">Good</option>
+                                <option value="BabProgression.ThreeQuarter">Average</option>
+                                <option value="BabProgression.Half">Poor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Hit Die</label>
+                            <select class="form-select" @bind="classLevel.HitDie">
+                                @foreach (var die in Enum.GetValues<HitDie>())
+                                {
+                                    <option value="@die">@die.ToString().ToLower()</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Fortitude Progression</label>
+                            <select class="form-select" @bind="classLevel.SaveProgression.Fort">
+                                <option value="SaveProgression.Good">Good</option>
+                                <option value="SaveProgression.Poor">Poor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Reflex Progression</label>
+                            <select class="form-select" @bind="classLevel.SaveProgression.Ref">
+                                <option value="SaveProgression.Good">Good</option>
+                                <option value="SaveProgression.Poor">Poor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Will Progression</label>
+                            <select class="form-select" @bind="classLevel.SaveProgression.Will">
+                                <option value="SaveProgression.Good">Good</option>
+                                <option value="SaveProgression.Poor">Poor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Class Skills</label>
+                        <div class="row">
+                            @for (int i = 0; i < allSkills.Count; i++)
+                            {
+                                var skill = allSkills[i];
+                                <div class="col-6 col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="skill_@i" checked="@classLevel.ClassSkills.Contains(skill)" @onchange="e => ToggleSkill(skill, e.Value is bool b && b)" />
+                                        <label class="form-check-label" for="skill_@i">@skill</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="simpleWeapons" @bind="classLevel.SimpleWeapons" />
+                                <label class="form-check-label" for="simpleWeapons">Simple Weapons</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="martialWeapons" @bind="classLevel.MartialWeapons" />
+                                <label class="form-check-label" for="martialWeapons">Martial Weapons</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Weapon Proficiencies</label>
+                                <input class="form-control" @bind="classLevel.WeaponProficiencies" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="lightArmor" @bind="classLevel.LightArmor" />
+                                <label class="form-check-label" for="lightArmor">Light Armor</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="mediumArmor" @bind="classLevel.MediumArmor" />
+                                <label class="form-check-label" for="mediumArmor">Medium Armor</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="heavyArmor" @bind="classLevel.HeavyArmor" />
+                                <label class="form-check-label" for="heavyArmor">Heavy Armor</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Armor Proficiencies</label>
+                                <input class="form-control" @bind="classLevel.ArmorProficiencies" />
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="shields" @bind="classLevel.Shields" />
+                                <label class="form-check-label" for="shields">Shields</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="towerShields" @bind="classLevel.TowerShields" />
+                                <label class="form-check-label" for="towerShields">Tower Shields</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseClassModal">Cancel</button>
+                    <button class="btn btn-primary" @onclick="CloseClassModal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     [Parameter] public string? Id { get; set; }
     private string activeTab = "spells";
     private Character character = new();
     private ClassLevel classLevel = new();
+    private bool showClassModal;
+    private List<string> allSkills = new()
+    {
+        "Appraise","Balance","Bluff","Climb","Concentration","Craft","Decipher Script","Diplomacy","Disable Device","Disguise","Escape Artist","Forgery","Gather Information","Handle Animal","Heal","Hide","Intimidate","Jump","Knowledge (Arcana)","Knowledge (Dungeoneering)","Knowledge (Local)","Knowledge (Nature)","Knowledge (Religion)","Knowledge (The Planes)","Listen","Move Silently","Open Lock","Ride","Search","Sense Motive","Sleight of Hand","Spellcraft","Spot","Survival","Swim","Tumble","Use Magic Device","Use Rope"
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +246,22 @@
         else
         {
             character.ClassLevels.Add(classLevel);
+        }
+    }
+
+    private void OpenClassModal() => showClassModal = true;
+    private void CloseClassModal() => showClassModal = false;
+
+    private void ToggleSkill(string skill, bool isChecked)
+    {
+        if (isChecked)
+        {
+            if (!classLevel.ClassSkills.Contains(skill))
+                classLevel.ClassSkills.Add(skill);
+        }
+        else
+        {
+            classLevel.ClassSkills.Remove(skill);
         }
     }
 
