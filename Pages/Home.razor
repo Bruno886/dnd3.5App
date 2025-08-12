@@ -1,7 +1,54 @@
-﻿@page "/"
+@page "/"
+@using CharacterModel = dnd3._5App.Models.Character
+@inject dnd3._5App.Services.StorageService Storage
+@inject NavigationManager Nav
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Characters</PageTitle>
 
-<h1>Hello, world!</h1>
+<h3>Characters</h3>
+<button class="btn btn-primary mb-3" @onclick="CreateCharacter">New Character</button>
 
-Welcome to your new app.
+@if (_characters is null)
+{
+    <p>Loading...</p>
+}
+else if (_characters.Count == 0)
+{
+    <p>No characters saved.</p>
+}
+else
+{
+    <ul class="list-unstyled">
+        @foreach (var c in _characters)
+        {
+            <li class="mb-2">
+                <a href="/character/@c.Id">
+                    <strong>@c.Name</strong> - @c.Race - Level @c.Level
+                </a>
+                <button class="btn btn-sm btn-danger ms-2" @onclick="() => DeleteCharacter(c.Id)">Delete</button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<CharacterModel>? _characters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _characters = await Storage.GetCharactersAsync();
+    }
+
+    private async Task CreateCharacter()
+    {
+        var newChar = new CharacterModel { Name = "New Character" };
+        await Storage.SaveCharacterAsync(newChar);
+        Nav.NavigateTo($"/character/{newChar.Id}");
+    }
+
+    private async Task DeleteCharacter(string id)
+    {
+        await Storage.DeleteCharacterAsync(id);
+        _characters?.RemoveAll(c => c.Id == id);
+    }
+}
