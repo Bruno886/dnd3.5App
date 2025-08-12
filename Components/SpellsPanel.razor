@@ -1,21 +1,4 @@
-@using dnd3._5App.Models
-
-@if (Character != null)
-{
-    foreach (var entry in Character.Spells.CasterEntries)
-    {
-        <div class="caster-entry">
-            <h4>@entry.ClassName</h4>
-            <ul>
-            @foreach (var spell in entry.Known)
-            {
-                <li>@spell.Name (Lv @spell.Level)</li>
-            }
-            </ul>
-        </div>
-    }
-}
-
-@code {
-    [Parameter] public Character? Character { get; set; }
-}
+<div class="card p-3">
+    <h6 class="mb-2">Spells</h6>
+    <p class="text-muted">Spells panel placeholder</p>
+</div>

@@ -1,0 +1,94 @@
+@page "/character-edit"
+
+<div class="character-sheet container-fluid">
+    <header class="mb-4">
+        <input class="form-control form-control-lg mb-2" placeholder="Character Name" />
+        <div class="row g-2">
+            <div class="col-12 col-sm-4">
+                <input class="form-control" placeholder="Class &amp; Level" />
+            </div>
+            <div class="col-12 col-sm-4">
+                <input class="form-control" placeholder="Race / Ancestry" />
+            </div>
+            <div class="col-6 col-sm-2">
+                <input class="form-control" placeholder="Alignment" />
+            </div>
+            <div class="col-6 col-sm-2">
+                <input class="form-control" placeholder="Player Name" />
+            </div>
+        </div>
+    </header>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <AbilityBlock />
+        </div>
+        <div class="col-12 col-md-4">
+            <SavesBlock />
+        </div>
+        <div class="col-12 col-md-4">
+            <ArmorClassBlock />
+            <div class="mt-3">
+                <HitPointsBlock />
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6">
+            <CombatBlock />
+        </div>
+        <div class="col-12 col-md-6">
+            <SkillsTable />
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6">
+            <FeatsList />
+        </div>
+        <div class="col-12 col-md-6">
+            <InventoryList />
+        </div>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <button class="nav-link @((activeTab == "spells") ? "active" : null)" @onclick='() => activeTab = "spells"'>Spells</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link @((activeTab == "notes") ? "active" : null)" @onclick='() => activeTab = "notes"'>Notes</button>
+                </li>
+            </ul>
+            <div class="border border-top-0 p-3">
+                @if (activeTab == "spells")
+                {
+                    <SpellsPanel />
+                }
+                else
+                {
+                    <NotesPanel />
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="sticky-footer d-flex justify-content-end gap-2">
+        <button class="btn btn-secondary">Recalculate</button>
+        <button class="btn btn-success">Save</button>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Export / Import</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Export</a></li>
+                <li><a class="dropdown-item" href="#">Import</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string activeTab = "spells";
+}
+
