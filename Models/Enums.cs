@@ -2,6 +2,7 @@ namespace dnd3._5App.Models;
 
 public enum BabProgression { Full, ThreeQuarter, Half }
 public enum SaveProgression { Good, Poor }
+public enum HitDie { D4, D6, D8, D10, D12 }
 public enum SizeCategory { Fine, Diminutive, Tiny, Small, Medium, Large, Huge, Gargantuan, Colossal }
 public enum Ability { Str, Dex, Con, Int, Wis, Cha }
 
