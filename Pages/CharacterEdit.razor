@@ -1,20 +1,24 @@
 @page "/character-edit"
+@page "/character-edit/{Id}"
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.StorageService Storage
+@inject NavigationManager Nav
 
 <div class="character-sheet container-fluid">
     <header class="mb-4">
-        <input class="form-control form-control-lg mb-2" placeholder="Character Name" />
+        <input class="form-control form-control-lg mb-2" placeholder="Character Name" @bind="character.Name" />
         <div class="row g-2">
             <div class="col-12 col-sm-4">
-                <input class="form-control" placeholder="Class &amp; Level" />
+                <input class="form-control" placeholder="Class" @bind="classLevel.ClassName" />
+            </div>
+            <div class="col-6 col-sm-2">
+                <input type="number" class="form-control" placeholder="Level" @bind="classLevel.Level" min="0" max="20" />
             </div>
             <div class="col-12 col-sm-4">
-                <input class="form-control" placeholder="Race / Ancestry" />
+                <input class="form-control" placeholder="Race / Ancestry" @bind="character.Race" />
             </div>
             <div class="col-6 col-sm-2">
-                <input class="form-control" placeholder="Alignment" />
-            </div>
-            <div class="col-6 col-sm-2">
-                <input class="form-control" placeholder="Player Name" />
+                <input class="form-control" placeholder="Alignment" @bind="character.Alignment" />
             </div>
         </div>
     </header>
@@ -77,7 +81,7 @@
 
     <div class="sticky-footer d-flex justify-content-end gap-2">
         <button class="btn btn-secondary">Recalculate</button>
-        <button class="btn btn-success">Save</button>
+        <button class="btn btn-success" @onclick="Save">Save</button>
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Export / Import</button>
             <ul class="dropdown-menu">
@@ -89,6 +93,38 @@
 </div>
 
 @code {
+    [Parameter] public string? Id { get; set; }
     private string activeTab = "spells";
+    private Character character = new();
+    private ClassLevel classLevel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(Id))
+        {
+            var existing = await Storage.GetCharacterAsync(Id);
+            if (existing != null)
+            {
+                character = existing;
+                classLevel = existing.ClassLevels.FirstOrDefault() ?? new ClassLevel();
+            }
+            else
+            {
+                character.ClassLevels.Add(classLevel);
+            }
+        }
+        else
+        {
+            character.ClassLevels.Add(classLevel);
+        }
+    }
+
+    private async Task Save()
+    {
+        character.ClassLevels.Clear();
+        character.ClassLevels.Add(classLevel);
+        await Storage.SaveCharacterAsync(character);
+        Nav.NavigateTo("/");
+    }
 }
 

@@ -22,8 +22,8 @@ else
         @foreach (var c in _characters)
         {
             <li class="mb-2">
-                <a href="/character/@c.Id">
-                    <strong>@c.Name</strong> - @c.Race - Level @c.Level
+                <a href="/character-edit/@c.Id">
+                    <strong>@c.Name</strong> - @c.Race - @c.ClassLevels.FirstOrDefault()?.ClassName - Level @c.Level
                 </a>
                 <button class="btn btn-sm btn-danger ms-2" @onclick="() => DeleteCharacter(c.Id)">Delete</button>
             </li>
@@ -43,7 +43,7 @@ else
     {
         var newChar = new CharacterModel { Name = "New Character" };
         await Storage.SaveCharacterAsync(newChar);
-        Nav.NavigateTo($"/character/{newChar.Id}");
+        Nav.NavigateTo($"/character-edit/{newChar.Id}");
     }
 
     private async Task DeleteCharacter(string id)
