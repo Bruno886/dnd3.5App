@@ -1,4 +1,73 @@
+@using dnd3._5App.Models
+@inject dnd3._5App.Services.RulesService Rules
+
 <div class="card p-3">
     <h6 class="mb-2">Ability Scores</h6>
-    <p class="text-muted">Ability block placeholder</p>
+    @foreach (var ability in Enum.GetValues<Ability>())
+    {
+        var total = Abilities[ability] + TempMods[ability];
+        <div class="d-flex align-items-center mb-2 ability-row">
+            <label class="me-2 flex-grow-1">@ability.ToString().ToUpper()</label>
+            <input type="number" class="form-control text-center me-2" style="width:4rem" value="@total" readonly @onclick="() => OpenModal(ability)" />
+            <input type="number" class="form-control text-center" style="width:4rem" value="@Rules.AbilityMod(total)" readonly />
+        </div>
+    }
 </div>
+
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit @selectedAbility.ToString().ToUpper()</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Score</label>
+                        <input type="number" class="form-control" @bind="modalScore" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Temporary Score</label>
+                        <input type="number" class="form-control" @bind="modalTempScore" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SaveModal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private AbilityScores Abilities { get; set; } = new();
+    private AbilityScores TempMods { get; set; } = new();
+
+    private bool showModal;
+    private Ability selectedAbility;
+    private int modalScore;
+    private int? modalTempScore;
+
+    private void OpenModal(Ability ability)
+    {
+        selectedAbility = ability;
+        modalScore = Abilities[ability];
+        modalTempScore = TempMods[ability] != 0 ? Abilities[ability] + TempMods[ability] : (int?)null;
+        showModal = true;
+    }
+
+    private void CloseModal()
+        => showModal = false;
+
+    private void SaveModal()
+    {
+        Abilities[selectedAbility] = modalScore;
+        TempMods[selectedAbility] = modalTempScore.HasValue ? modalTempScore.Value - modalScore : 0;
+        showModal = false;
+    }
+}
+
